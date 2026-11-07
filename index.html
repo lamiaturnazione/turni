@@ -38,21 +38,40 @@ summary{color:var(--ac)}
 .k1{background:linear-gradient(160deg,#ffd45e,#f59e0b);color:#2a1a00}.k2{background:linear-gradient(160deg,#ff9a62,#ef4b3b);color:#2a0d00}.k3{background:linear-gradient(160deg,#6f7dff,#3a2fb0);color:#fff}.kR{background:linear-gradient(160deg,#4a5068,#2b2f40);color:#c9cde0}.kP{background:linear-gradient(160deg,#5be3a8,#15936b);color:#04261a}.kC{background:linear-gradient(160deg,#52d6e6,#1384a0);color:#02222a}
 .cc.t{outline:3px solid #fff;outline-offset:1px}.cc.o{opacity:.4}.cc.su i{color:#ff5d5d}.k1.su i,.k2.su i,.kP.su i,.kC.su i{color:#8b0000}
 #pk{background:#151b33!important;border-radius:20px 20px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.5)}
+#tb{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;align-items:center;gap:10px;padding:8px 2px;margin:-4px 0 8px;background:rgba(11,16,32,.88);backdrop-filter:blur(10px)}
+#tb #mb{background:none;box-shadow:none;font-size:1.6rem;line-height:1;padding:4px 10px;color:#fff;border-radius:12px}
+#pt{flex:1;font-weight:800;font-size:1.2rem}
+.bdg{min-width:36px;text-align:center;border-radius:10px;padding:4px 8px;font-weight:800;font-size:1.05rem}
+#dr{position:fixed;top:0;bottom:0;left:0;width:78%;max-width:310px;transform:translateX(-105%);transition:transform .25s;background:#10152b;z-index:40;padding:calc(18px + env(safe-area-inset-top,0px)) 14px 18px;box-shadow:6px 0 30px rgba(0,0,0,.5);overflow:auto}
+#dr.on{transform:none}#dr .dh{margin:0 6px 14px;display:flex;flex-direction:column;gap:2px;font-size:1.15rem}
+#dr a{display:block;padding:13px 12px;border-radius:14px;margin:4px 0;font-size:1.05rem;cursor:pointer}
+#dr a.on{background:linear-gradient(135deg,rgba(111,140,255,.38),rgba(168,107,255,.32));font-weight:700}
+#sc{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:30}
+.pg{display:none}.pg.on{display:block}
+#mbar{display:none;align-items:center;gap:8px;padding:8px}#mbar input{flex:1;text-align:center}#mbar button{padding:8px 16px;font-size:1.2rem}
+.t.cur{background:rgba(124,156,255,.2);border-radius:8px;padding:2px 6px}
 </style></head><body>
-<h1>Turni &amp; Busta paga</h1><div class="mu" style="margin:-10px 2px 12px">Il tuo turno, la tua paga stimata</div>
-<div class="cd" id="td"></div><div class="cd" id="wk" style="display:flex;justify-content:space-between"></div><div class="cd"><input type="month" id="ym"><div class="mu" style="margin-top:6px">Il mese scelto è quello della busta: stipendio del mese più straordinari e maggiorazioni del mese precedente. Scorri il calendario a sinistra o a destra per cambiare mese.</div></div><div class="cd" id="cal"></div>
-<div class="cd big"><div><small>Busta del mese · lordo</small><b id="L"></b></div><div><small>Busta del mese · netto</small><b id="N"></b></div></div>
-<div class="cd" id="bk"></div><details class="cd"><summary>Anno mese per mese</summary><p><button id="gy">Genera turnazione 2027</button> <input type="number" id="yy" value="2027" style="width:84px"> <button id="yb">Calcola anno</button></p><div id="yr"></div></details>
-<details class="cd"><summary>Turnazione base</summary>
+<header id="tb"><button id="mb" aria-label="Menu">☰</button><span id="pt">Oggi</span><span id="bd" class="bdg"></span></header>
+<div id="sc"></div>
+<nav id="dr"><div class="dh"><b>Turni &amp; Busta paga</b><small class="mu">Il tuo turno, la tua paga stimata</small></div>
+<a data-pg="oggi">🏠 Oggi</a><a data-pg="mese">📅 Mese</a><a data-pg="stip">💶 Stipendio</a><a data-pg="fp">🏖️ Ferie &amp; PAR</a><a data-pg="anno">📊 Anno</a><a data-pg="imp">⚙️ Impostazioni</a></nav>
+<div class="cd" id="mbar"><button id="mp">‹</button><input type="month" id="ym"><button id="mn">›</button></div>
+<main>
+<section class="pg" id="p-oggi"><div class="cd" id="td"></div><div class="cd" id="wk" style="display:flex;justify-content:space-between"></div><p class="mu">Apri il menu ☰ in alto a sinistra per Mese, Stipendio, Ferie &amp; PAR e Impostazioni.</p></section>
+<section class="pg" id="p-mese"><p class="mu">Tocca un giorno per cambiarlo. Scorri il calendario a sinistra o a destra per cambiare mese.</p><div class="cd" id="cal"></div><details class="cd"><summary>Dettaglio giorni (straordinari, festivi)</summary><div id="rows"></div></details></section>
+<section class="pg" id="p-stip"><p class="mu">Il mese scelto è quello della busta: stipendio del mese più straordinari e maggiorazioni del mese precedente.</p><div class="cd big"><div><small>Busta del mese · lordo</small><b id="L"></b></div><div><small>Busta del mese · netto</small><b id="N"></b></div></div><div class="cd" id="bk"></div><p class="mu">Stima indicativa: imposte e trattenute sono approssimate con aliquote medie modificabili. Non sostituisce la busta paga.</p></section>
+<section class="pg" id="p-fp"><div id="fpv"></div></section>
+<section class="pg" id="p-anno"><div class="cd"><p><button id="gy">Genera turnazione 2027</button></p><p><input type="number" id="yy" value="2027" style="width:84px"> <button id="yb">Calcola anno</button></p><div id="yr"></div></div></section>
+<section class="pg" id="p-imp"><details class="cd" open><summary>Turnazione base e dati</summary>
 <p class="mu">Codici separati da virgola: 1, 2, 3 (turni), R (riposo), A (assenza). Il ciclo si ripete dalla data di inizio.</p>
 <input id="pat" style="width:100%;box-sizing:border-box"><div class="g"><span>Data inizio ciclo</span><input type="date" id="st" style="width:auto"></div>
 <p><button id="ap">Applica al mese</button></p><p class="mu">Carica i tuoi dati (file miei-dati.json): restano solo sul tuo telefono.</p><p><input type="file" id="fi" accept=".json,application/json"></p></details>
-<details class="cd"><summary>Parametri (dalla tua busta di ottobre)</summary><div class="g" id="pm"></div></details>
-<details class="cd"><summary>Dettaglio giorni (straordinari, festivi)</summary><div id="rows"></div></details><div id="pk" style="display:none;position:fixed;left:0;right:0;bottom:0;background:var(--cd);border-top:1px solid var(--bd);padding:12px 12px calc(12px + env(safe-area-inset-bottom,0px))"></div>
-<p class="mu">Stima indicativa: imposte e trattenute sono approssimate con aliquote medie modificabili. Non sostituisce la busta paga.</p>
+<details class="cd"><summary>Parametri (dalla tua busta)</summary><div class="g" id="pm"></div></details></section>
+</main>
+<div id="pk" style="display:none;position:fixed;left:0;right:0;bottom:0;background:var(--cd);border-top:1px solid var(--bd);padding:12px 12px calc(12px + env(safe-area-inset-bottom,0px))"></div>
 <script>
-const P={rate:13.6087,rateOT:13.5549,fisso:2345,inc:0.84,t2:27.5,t3:60.5,c1:30,c3:72.7,inps:9.49,irpef:22.8,add:3.2,cpct:1.95,fdip:3.3,ffig:5.1,sind:21.56,sind13:21.56,rend:8.61,cpp:33.5,cip:80,altre:0,aum:17.25,t13:41.15};
-const LB={rate:"Tariffa oraria (€)",rateOT:"Tariffa straordinario (€)",fisso:"Retribuzione mese (€)",inc:"Incentivo produttività (€/h)",t2:"Magg. 2° turno (%)",t3:"Magg. 3° turno (%)",c1:"Compensativa diurno/1° (%)",c3:"Compensativa 3° turno (%)",inps:"Contributi INPS (%)",irpef:"IRPEF netta media (%)",add:"Addizionali (%)",cpct:"Cometa dipendente (% del lordo)",fdip:"Fasif dipendente (€/mese)",ffig:"Fasif figlia (€/mese)",sind:"Contributo sindacale (€/mese)",sind13:"Sindacato in più a dicembre (€)",rend:"Incentivo rendimento (€/mese)",cpp:"Indennità congedo parentale (% paga)",cip:"Cassa integrazione (% paga)",altre:"Altre trattenute (€/mese)",aum:"Aumento CCSL da nov 2026 (€/mese)",t13:"Trattenute su tredicesima (%)"};
+const P={rate:13.6087,rateOT:13.5549,fisso:2345,inc:0.84,t2:27.5,t3:60.5,c1:30,c3:72.7,inps:9.49,irpef:22.8,add:3.2,cpct:1.95,fdip:3.3,ffig:5.1,sind:21.56,sind13:21.56,rend:8.61,cpp:33.5,cip:80,fer:200,par:104,altre:0,aum:17.25,t13:41.15};
+const LB={rate:"Tariffa oraria (€)",rateOT:"Tariffa straordinario (€)",fisso:"Retribuzione mese (€)",inc:"Incentivo produttività (€/h)",t2:"Magg. 2° turno (%)",t3:"Magg. 3° turno (%)",c1:"Compensativa diurno/1° (%)",c3:"Compensativa 3° turno (%)",inps:"Contributi INPS (%)",irpef:"IRPEF netta media (%)",add:"Addizionali (%)",cpct:"Cometa dipendente (% del lordo)",fdip:"Fasif dipendente (€/mese)",ffig:"Fasif figlia (€/mese)",sind:"Contributo sindacale (€/mese)",sind13:"Sindacato in più a dicembre (€)",rend:"Incentivo rendimento (€/mese)",cpp:"Indennità congedo parentale (% paga)",cip:"Cassa integrazione (% paga)",fer:"Ferie annue (ore)",par:"PAR annui (ore)",altre:"Altre trattenute (€/mese)",aum:"Aumento CCSL da nov 2026 (€/mese)",t13:"Trattenute su tredicesima (%)"};
 let S={};try{S=JSON.parse(localStorage.getItem("s")||"{}")}catch(e){}
 S.p=Object.assign({},P,S.p||{});if(S.p.altre==101.4)S.p.altre=0;if(S.p.inps==9.19)S.p.inps=9.49;if(S.p.cpct==1.93)S.p.cpct=1.95;if(S.p.cpp==30)S.p.cpp=33.5;S.d=S.d||{};S.pat=S.pat||"1,1,1,1,1,R,R,2,2,2,2,2,R,R,3,3,3,3,3,R,R";S.st=S.st||"";for(const k in S.d)if(S.d[k]&&S.d[k].s=="1*")S.d[k].s="1";
 const sv=()=>{try{localStorage.setItem("s",JSON.stringify(S))}catch(e){}};
@@ -80,7 +99,7 @@ return{tur:pt*p.rate,com:pc*p.rate,str:ot+om*p.rate,inc:ore*p.inc,fq,ore,ns,cp,m
 function calc(){const pm=$("ym").value,[y,m]=pm.split("-").map(Number),pv=new Date(y,m-2,1),prev=pv.getFullYear()+"-"+String(pv.getMonth()+1).padStart(2,"0"),V=comp(prev,pm),C=comp(pm,pm),p=C.p,{tur,com,str,inc}=V,fq=C.fq,ore=V.ore,v30=V.ns*0.5*V.p.rate,rd=+p.rend||0,cpa=-V.cp*8*V.p.rateOT*(1-p.cpp/100)-V.ci*8*V.p.rateOT*(1-p.cip/100),mlx=V.ml*8*V.p.rateOT*0.0833,tr=m==12?p.fisso+v30+rd:0,L=p.fisso+tur+com+str+inc+fq+v30+rd+tr+cpa+mlx,sd=p.sind+(m==12?(+p.sind13||0):0),cm=(L-tr)*(+p.cpct||0)/100,ip=(L-tr)*p.inps/100,imp=L-tr-ip,tx=(imp-cm-p.fdip-p.ffig)*(p.irpef+p.add)/100,N=imp-tx-cm-p.fdip-p.ffig-sd-p.altre+tr*(1-(+p.t13||41.15)/100);
 window.LAST={L:L,N:N};$("L").textContent=E(L);$("N").textContent=E(N);
 const t=(a,b)=>`<div class="t"><span>${a}</span><span>${E(b)}</span></div>`;
-$("bk").innerHTML=t("Retribuzione del mese",p.fisso)+t("Magg. turni (mese prec.)",tur)+t("Compensative (mese prec.)",com)+t("Straordinario + magg. (mese prec.)",str)+t(`Incentivo produttività (${ore} h, mese prec.)`,inc)+t("Incentivo rendimento (mese prec.)",rd)+t("Congedo parentale / CI (mese prec.)",cpa)+t("Malattia: ratei 13ª (mese prec.)",mlx)+t("30' non fruiti (mese prec.)",v30)+t("Tredicesima (stima)",tr)+t("Festività in domenica (1/26)",fq)+t("Contributi INPS",-ip)+t("IRPEF e addizionali",-tx)+t("Trattenute su tredicesima",-tr*(+p.t13||41.15)/100)+t("Cometa",-cm)+t("Fasif (tu e figlia)",-(p.fdip+p.ffig))+t("Contributo sindacale",-sd)+t("Altre trattenute",-p.altre);oggi();cal()}
+$("bk").innerHTML=t("Retribuzione del mese",p.fisso)+t("Magg. turni (mese prec.)",tur)+t("Compensative (mese prec.)",com)+t("Straordinario + magg. (mese prec.)",str)+t(`Incentivo produttività (${ore} h, mese prec.)`,inc)+t("Incentivo rendimento (mese prec.)",rd)+t("Congedo parentale / CI (mese prec.)",cpa)+t("Malattia: ratei 13ª (mese prec.)",mlx)+t("30' non fruiti (mese prec.)",v30)+t("Tredicesima (stima)",tr)+t("Festività in domenica (1/26)",fq)+t("Contributi INPS",-ip)+t("IRPEF e addizionali",-tx)+t("Trattenute su tredicesima",-tr*(+p.t13||41.15)/100)+t("Cometa",-cm)+t("Fasif (tu e figlia)",-(p.fdip+p.ffig))+t("Contributo sindacale",-sd)+t("Altre trattenute",-p.altre);oggi();cal();fpv()}
 const FEST=["2026-10-04","2026-11-01","2026-12-08","2026-12-25","2026-12-26","2027-01-01","2027-01-06","2027-03-29","2027-04-25","2027-05-01","2027-06-02","2027-08-15","2027-10-04","2027-11-01","2027-12-08","2027-12-25","2027-12-26"];
 const OTP=(s,w,f)=>{const t=s=="3"?2:s=="2"?1:0;if(f)return[55,70,80][t];if(w==0)return[65,75,85][t];return[w==6?42.5:30,47.5,57.5][t]};
 const TN={R:"Riposo","1":"Turno 1","1*":"Turno 1 (postazione)","2":"Turno 2","3":"Turno 3",C:"Centrale",A:"Assenza",P:"PAR",PS1:"Permesso sindacale (1° turno)",PS2:"Permesso sindacale (2° turno)",PS3:"Permesso sindacale (3° turno)",M1:"Malattia (1° turno)",M2:"Malattia (2° turno)",M3:"Malattia (3° turno)",CP:"Congedo parentale",INF1:"Infortunio (1° turno)",INF2:"Infortunio (2° turno)",INF3:"Infortunio (3° turno)",DS1:"Donazione sangue",DS2:"Donazione sangue",DS3:"Donazione sangue",CI:"Cassa integrazione",F:"Ferie",FI:"Festività infrasettimanale","1+":"Turno 1 + 4h str.","2+":"Turno 2 + 4h str.","3+":"Turno 3 + 4h str."},TM={"1":"06:00-14:00","1*":"06:00-14:00","2":"14:00-22:00","3":"22:00-06:00",C:"08:00-16:00","1+":"06:00-14:00 + 4 h","2+":"14:00-22:00 + 4 h","3+":"22:00-06:00 + 4 h"};
@@ -90,8 +109,10 @@ function cal(){const [y,m]=$("ym").value.split("-").map(Number),f=new Date(y,m-1
 for(let i=0;i<w*7;i++){const x=new Date(st);x.setDate(st.getDate()+i);const k=iso(x),dd=S.d[k]||{},s=dd.s||"",c=s?"k"+("123C".includes(s[0])?s[0]:s=="R"?"R":/^(M|INF)[123]$/.test(s)?"M":"P"):"";
 h+=`<div class="cc ${c}${x.getMonth()!=m-1?" o":""}${k==td?" t":""}${x.getDay()==0||FEST.includes(k)?" su":""}" data-k="${k}"><i>${x.getDate()}</i>${s||"–"}${dd.l?"<sup>*</sup>":""}${dd.n?"<b class=\"nt\">•</b>":""}</div>`}
 $("cal").innerHTML=`<div class="cg">${h}</div>`}
+function kcl(s){return s?"k"+("123C".includes(s[0])?s[0]:s=="R"?"R":/^(M|INF)[123]$/.test(s)?"M":"P"):""}
 function oggi(){const n=new Date(),dk=x=>x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0"),g=x=>(S.d[dk(x)]||{}).s||"R";
 $("td").innerHTML=`<div class="mu">Oggi, ${n.toLocaleDateString("it-IT",{weekday:"long",day:"numeric",month:"long"})}</div><b style="font-size:1.4rem">${TN[g(n)]}</b><div>${TM[g(n)]||""}${(S.d[dk(n)]||{}).l?" · "+esc(S.d[dk(n)].l):""}</div>${(S.d[dk(n)]||{}).n?`<div class="mu">📝 ${esc(S.d[dk(n)].n)}</div>`:""}`;
+$("bd").textContent=g(n);$("bd").className="bdg "+kcl(g(n));
 const mo=new Date(n);mo.setDate(n.getDate()-((n.getDay()+6)%7));let h="";
 for(let i=0;i<7;i++){const x=new Date(mo);x.setDate(mo.getDate()+i);h+=`<div style="text-align:center;${dk(x)==dk(n)?"font-weight:700;color:var(--ac)":""}"><small class="mu">${x.toLocaleDateString("it-IT",{weekday:"short"})}</small><div>${x.getDate()}</div><div>${g(x)}</div></div>`}
 $("wk").innerHTML=h}
@@ -106,7 +127,18 @@ $("gy").onclick=()=>{const b=Date.UTC(2027,0,4);for(let t=new Date(Date.UTC(2026
 $("yb").onclick=()=>{const cur=$("ym").value;let h="",tl=0,tn=0;for(let m=1;m<=12;m++){$("ym").value=$("yy").value+"-"+String(m).padStart(2,"0");calc();const v=window.LAST;tl+=v.L;tn+=v.N;h+=`<div class="t"><span>${new Date(+$("yy").value,m-1,1).toLocaleDateString("it-IT",{month:"long"})}</span><span>${E(v.L)} · ${E(v.N)}</span></div>`}h+=`<div class="t"><b>Totale</b><b>${E(tl)} · ${E(tn)}</b></div><p class="mu">Lordo · netto stimato</p>`;$("yr").innerHTML=h;$("ym").value=cur;rows()};
 const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
 $("fi").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const D=JSON.parse(r.result);let n=0;const d=new Date(D.start+"T12:00:00");D.codes.forEach(v=>{const k=d.toISOString().slice(0,10);S.d[k]=S.d[k]||{};S.d[k].s=v;delete S.d[k].l;n++;d.setDate(d.getDate()+1)});for(const k in (D.x||{})){S.d[k].l=D.x[k]}for(const k in (D.n||{})){S.d[k]=S.d[k]||{};S.d[k].n=D.n[k]}sv();rows();alert("Giorni importati: "+n)}catch(err){alert("File non valido")}};r.readAsText(f)};
-document.addEventListener("change",e=>{const t=e.target;
+const T={oggi:"Oggi",mese:"Mese",stip:"Stipendio",fp:"Ferie & PAR",anno:"Anno",imp:"Impostazioni"},mesi=["gen","feb","mar","apr","mag","giu","lug","ago","set","ott","nov","dic"];
+function go(p){S.pg=p;sv();document.querySelectorAll(".pg").forEach(e=>e.classList.toggle("on",e.id=="p-"+p));document.querySelectorAll("#dr a").forEach(a=>a.classList.toggle("on",a.dataset.pg==p));$("pt").textContent=T[p];$("mbar").style.display=["mese","stip","fp"].includes(p)?"flex":"none";$("dr").classList.remove("on");$("sc").style.display="none";window.scrollTo(0,0);if(p=="fp")fpv()}
+$("mb").onclick=()=>{$("dr").classList.add("on");$("sc").style.display="block"};
+$("sc").onclick=()=>{$("dr").classList.remove("on");$("sc").style.display="none"};
+$("dr").onclick=e=>{const a=e.target.closest("a");if(a)go(a.dataset.pg)};
+$("mp").onclick=()=>mv(-1);$("mn").onclick=()=>mv(1);
+function fpv(){const el=$("fpv");if(!el)return;const v=$("ym").value,y=+v.slice(0,4),m0=+v.slice(5,7),p=S.p;S.fp=S.fp||{};const f=S.fp[y]||{},rf=+f.rf||0,rp=+f.rp||0,af=+f.af||0,ap=+f.ap||0;
+const fu=(c,up)=>{let n=0;for(let m=1;m<=up;m++){const dm=new Date(y,m,0).getDate();for(let d=1;d<=dm;d++){if((S.d[y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0")]||{}).s==c)n++}}return n*8};
+const blk=(nm,ann,res,adj,c,kr,ka)=>{let r=`<div class="cd"><b>${nm}</b><div class="g"><span>Riporto anno precedente (h)</span><input type="number" step="0.01" data-fp="${kr}" value="${res}"><span>Rettifica ore fruite (h)</span><input type="number" step="0.01" data-fp="${ka}" value="${adj}"></div><div class="t mu"><span>Mese</span><span>Maturate · Fruite · Residuo</span></div>`;for(let m=1;m<=12;m++){const mt=ann*m/12,fr=fu(c,m)+adj;r+=`<div class="t${m==m0?" cur":""}"><span>${mesi[m-1]}</span><span>${mt.toFixed(1)} · ${fr.toFixed(1)} · <b>${(res+ann-fr).toFixed(1)}</b></span></div>`}return r+`<p class="mu">Residuo = spettanza annua (${ann} h) + riporto − fruite. Saldo maturato a fine mese scelto: ${(res+ann*m0/12-fu(c,m0)-adj).toFixed(1)} h.</p></div>`};
+const fF=+p.fer||200,fP=+p.par||104,frF=fu("F",m0)+af,frP=fu("P",m0)+ap;
+el.innerHTML=`<div class="cd big"><div><small>Ferie · residuo ${y}</small><b>${(rf+fF-frF).toFixed(1)} h</b><small>${((rf+fF-frF)/8).toFixed(1)} giorni</small></div><div><small>PAR · residuo ${y}</small><b>${(rp+fP-frP).toFixed(1)} h</b><small>${((rp+fP-frP)/8).toFixed(1)} giorni</small></div></div>`+blk("Ferie",fF,rf,af,"F","rf","af")+blk("PAR",fP,rp,ap,"P","rp","ap")}
+document.addEventListener("change",e=>{const t=e.target;if(t.dataset.fp){const y=+$("ym").value.slice(0,4);S.fp=S.fp||{};S.fp[y]=S.fp[y]||{};S.fp[y][t.dataset.fp]=+t.value||0;sv();fpv();return}
 if(t.dataset.p){S.p[t.dataset.p]=+t.value;sv();calc()}
 else if(t.dataset.f){const k=t.closest(".r").dataset.k;S.d[k]=S.d[k]||{};S.d[k][t.dataset.f]=t.type=="checkbox"?t.checked:t.value;sv();calc()}
 else if(t.id=="ym")rows();else if(t.id=="pat"||t.id=="st"){S.pat=$("pat").value;S.st=$("st").value;sv()}});
@@ -114,6 +146,6 @@ $("ap").onclick=()=>{S.pat=$("pat").value;S.st=$("st").value;if(!S.st){alert("Im
 const c=S.pat.split(",").map(s=>s.trim().toUpperCase()).filter(Boolean),[y,m]=$("ym").value.split("-").map(Number),n=new Date(y,m,0).getDate(),s0=new Date(S.st),b=Date.UTC(s0.getFullYear(),s0.getMonth(),s0.getDate());
 for(let d=1;d<=n;d++){const i=Math.round((Date.UTC(y,m-1,d)-b)/864e5),v=c[((i%c.length)+c.length)%c.length].replace("*",""),k=keyOf(d);S.d[k]=Object.assign(S.d[k]||{},{s:v})}
 sv();rows()};
-rows();
+rows();go(S.pg||"oggi");
 try{if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)&&!/claude/.test(location.host))navigator.serviceWorker.register("sw.js")}catch(e){}
 </script></body></html>
