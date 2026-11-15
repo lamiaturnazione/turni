@@ -94,14 +94,23 @@ summary{color:var(--ac)}
 <p class="mu">Codici separati da virgola: 1, 2, 3 (turni), R (riposo), A (assenza). Il ciclo si ripete dalla data di inizio.</p>
 <input id="pat" style="width:100%;box-sizing:border-box"><div class="g"><span>Data inizio ciclo</span><input type="date" id="st" style="width:auto"></div>
 <p><button id="ap">Applica al mese</button></p><p><button id="gy">Genera turnazione 2027</button></p><p class="mu">Carica i tuoi dati (miei-dati.json oppure un backup): restano solo su questo dispositivo.</p><p><input type="file" id="fi" accept=".json,application/json"></p><p><button id="bkp">Salva backup dei dati</button></p><p class="mu">Per usare l'app su un altro dispositivo: salva il backup qui, invialo all'altro dispositivo (Drive, WhatsApp, e-mail) e caricalo con il pulsante sopra.</p></details>
-<details class="cd"><summary>Parametri (dalla tua busta)</summary><div class="g" id="pm"></div></details><details class="cd"><summary>Festività locale</summary><p class="mu">Santo patrono del luogo di lavoro, in formato MM-GG (per esempio 06-24). Se la sede ha concordato un altro giorno, inserisci quello.</p><input id="pat2" placeholder="MM-GG" maxlength="5" style="width:96px"></details></section>
+<details class="cd"><summary>Parametri (dalla tua busta)</summary><div class="g" id="pm"></div></details><details class="cd"><summary>Sincronizzazione tra dispositivi (facoltativa)</summary>
+<p class="mu">Collega l'app a un tuo database Firebase gratuito: i dati si allineano da soli tra telefono e tablet.</p>
+<p class="mu">1) Incolla qui il blocco firebaseConfig del tuo progetto:</p><textarea id="fbc" rows="4" style="width:100%;box-sizing:border-box" placeholder="const firebaseConfig = { apiKey: &quot;...&quot;, ... }"></textarea>
+<p><button id="fbk">Salva configurazione</button></p>
+<p class="mu">2) Accedi o crea il tuo account (email e password):</p>
+<input id="fbe" type="email" placeholder="email" style="width:100%;box-sizing:border-box;margin-bottom:6px"><input id="fbp" type="password" placeholder="password (almeno 6 caratteri)" style="width:100%;box-sizing:border-box">
+<p><button id="fbi">Accedi</button> <button id="fbn">Crea account</button></p>
+<p><button id="fbs">Sincronizza ora</button> <button id="fbo">Esci</button></p><div class="mu" id="fbm">Non collegato</div></details>
+<details class="cd"><summary>Festività locale</summary><p class="mu">Santo patrono del luogo di lavoro, in formato MM-GG (per esempio 06-24). Se la sede ha concordato un altro giorno, inserisci quello.</p><input id="pat2" placeholder="MM-GG" maxlength="5" style="width:96px"></details></section>
 </main>
 <script>
 const P={rate:13.6087,rateOT:13.5549,fisso:2345,inc:0.84,t2:27.5,t3:60.5,c1:30,c3:72.7,inps:9.49,irpef:22.8,add:3.2,cpct:2,fdip:3.3,ffig:5.1,sind:21.56,sind13:21.56,rend:9.25,cpp:33.5,cip:80,fer:200,par:104,bp:0,bpg:0.82,adr:69.81,adc:21.62,ada:10.77,altre:0,aum:17.25,t13:41.15};
 const LB={rate:"Tariffa oraria (€)",rateOT:"Tariffa straordinario (€)",fisso:"Retribuzione mese (€)",inc:"Incentivo produttività (€/h)",t2:"Magg. 2° turno (%)",t3:"Magg. 3° turno (%)",c1:"Compensativa diurno/1° (%)",c3:"Compensativa 3° turno (%)",inps:"Contributi INPS (%)",irpef:"IRPEF netta media (%)",add:"Addizionali (%)",cpct:"Cometa dipendente (% del lordo)",fdip:"Fasif dipendente (€/mese)",ffig:"Fasif figlia (€/mese)",sind:"Contributo sindacale (€/mese)",sind13:"Sindacato in più a dicembre (€)",rend:"Incentivo rendimento (€/mese)",cpp:"Indennità congedo parentale (% paga)",cip:"Cassa integrazione (% paga)",fer:"Ferie annue (ore)",par:"PAR annui (ore)",bp:"Altri buoni pasto fissi (€/mese)",bpg:"Buoni pasto per turno lavorato (€)",adr:"Addizionale regionale (€/mese)",adc:"Addizionale comunale (€/mese)",ada:"Acconto addizionale comunale mar–nov (€)",altre:"Altre trattenute (€/mese)",aum:"Aumento CCSL da nov 2026 (€/mese)",t13:"Trattenute su tredicesima (%)"};
 let S={};try{S=JSON.parse(localStorage.getItem("s")||"{}")}catch(e){}
 S.p=Object.assign({},P,S.p||{});if(S.p.altre==101.4)S.p.altre=0;if(S.p.inps==9.19)S.p.inps=9.49;if(S.p.cpct==1.93)S.p.cpct=1.95;if(S.p.cpp==30)S.p.cpp=33.5;if(S.p.rend==8.61)S.p.rend=9.25;if(S.p.cpct==1.95||S.p.cpct==1.93)S.p.cpct=2;if(S.p.bp==12)S.p.bp=0;if(S.p.bpg==0.78)S.p.bpg=0.82;S.d=S.d||{};S.pat=S.pat||"1,1,1,1,1,R,R,2,2,2,2,2,R,R,3,3,3,3,3,R,R";S.st=S.st||"";for(const k in S.d)if(S.d[k]&&S.d[k].s=="1*")S.d[k].s="1";
-const sv=()=>{try{localStorage.setItem("s",JSON.stringify(S))}catch(e){}};
+let FBU=null,FB=null,_lk="",_pt=null;
+const sv=()=>{try{const k=JSON.stringify([S.d,S.p,S.fp,S.ex,S.patr,S.pat,S.st]);if(_lk==="")_lk=k;else if(k!==_lk){S.ts=Date.now();_lk=k;fbSched()}localStorage.setItem("s",JSON.stringify(S))}catch(e){}};
 const E=n=>n.toLocaleString("it-IT",{style:"currency",currency:"EUR"});
 const $=i=>document.getElementById(i);
 const now=new Date();$("ym").value=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
@@ -191,6 +200,22 @@ $("sg").onclick=e=>{const t=e.target.closest("[data-m]");if(t){$("ym").value=t.d
 $("yp").onclick=()=>mv(-12);$("yn").onclick=()=>mv(12);
 function mkBackup(){return JSON.stringify({app:"turni-backup",v:1,S:S})}
 $("bkp").onclick=()=>{const b=new Blob([mkBackup()],{type:"application/json"}),a=document.createElement("a"),t=new Date().toISOString().slice(0,10);a.href=URL.createObjectURL(b);a.download="turni-backup-"+t+".json";document.body.appendChild(a);a.click();a.remove()};
+const FS=["app","auth","firestore"].map(n=>"https://www.gstatic.com/firebasejs/10.12.2/firebase-"+n+"-compat.js"),SK=["d","p","fp","ex","patr","pat","st"];
+const loadJs=u=>new Promise((ok,ko)=>{const s=document.createElement("script");s.src=u;s.onload=ok;s.onerror=()=>ko(new Error("Impossibile caricare Firebase (sei online?)"));document.head.appendChild(s)});
+const fbMsg=t=>{$("fbm").textContent=t};
+const fbCfg=()=>{try{return JSON.parse(localStorage.getItem("fbcfg")||"null")}catch(e){return null}};
+async function fbInit(){if(FB)return FB;const c=fbCfg();if(!c||!c.apiKey)throw new Error("Configurazione mancante");for(const u of FS)await loadJs(u);if(!firebase.apps.length)firebase.initializeApp(c);FB={a:firebase.auth(),d:firebase.firestore()};FB.a.onAuthStateChanged(u=>{FBU=u;fbMsg(u?"Collegato come "+u.email:"Non collegato");if(u)fbPull(true)});return FB}
+function fbSched(){if(!FBU)return;clearTimeout(_pt);_pt=setTimeout(fbPush,4000)}
+async function fbPush(){if(!FBU)return;try{S.ts=S.ts||Date.now();const data={};SK.forEach(k=>data[k]=S[k]);await FB.d.collection("users").doc(FBU.uid).set({ts:S.ts,data:JSON.stringify(data)});fbMsg("Sincronizzato alle "+new Date().toLocaleTimeString("it-IT"))}catch(e){fbMsg("Errore invio: "+e.message)}}
+async function fbPull(first){if(!FBU)return;try{const r=await FB.d.collection("users").doc(FBU.uid).get();if(r.exists){const R=r.data();let useRemote=(R.ts||0)>(S.ts||0);if(!S.ts&&first&&Object.keys(S.d||{}).length>30&&R.ts){useRemote=confirm("Sul cloud ci sono già dei dati. OK = usa quelli del cloud (sostituisce i dati di questo dispositivo). Annulla = tieni questi dati e invia questi al cloud.")}if(useRemote){const dt=JSON.parse(R.data);SK.forEach(k=>{if(dt[k]!==undefined)S[k]=dt[k]});S.p=Object.assign({},P,S.p||{});S.ts=R.ts;_lk=JSON.stringify([S.d,S.p,S.fp,S.ex,S.patr,S.pat,S.st]);try{localStorage.setItem("s",JSON.stringify(S))}catch(e){}rows();fbMsg("Dati aggiornati dal cloud");return}if((R.ts||0)===(S.ts||0)){fbMsg("Già aggiornato");return}S.ts=Date.now()}await fbPush()}catch(e){fbMsg("Errore: "+e.message)}}
+$("fbc").value=localStorage.getItem("fbcfg")?"(configurazione salvata)":"";
+$("fbk").onclick=()=>{const o={};$("fbc").value.replace(/(\w+)\s*:\s*"([^"]*)"/g,(m,a,b)=>{o[a]=b});if(!o.apiKey||!o.projectId){fbMsg("Configurazione non valida: incolla il blocco firebaseConfig");return}localStorage.setItem("fbcfg",JSON.stringify(o));FB=null;$("fbc").value="(configurazione salvata)";fbMsg("Configurazione salvata. Ora accedi.");fbInit().catch(e=>fbMsg(e.message))};
+$("fbi").onclick=async()=>{try{await fbInit();await FB.a.signInWithEmailAndPassword($("fbe").value.trim(),$("fbp").value);$("fbp").value=""}catch(e){fbMsg("Accesso non riuscito: "+e.message)}};
+$("fbn").onclick=async()=>{try{await fbInit();await FB.a.createUserWithEmailAndPassword($("fbe").value.trim(),$("fbp").value);$("fbp").value=""}catch(e){fbMsg("Creazione non riuscita: "+e.message)}};
+$("fbs").onclick=async()=>{try{await fbInit();if(!FBU){fbMsg("Accedi prima");return}S.ts=Date.now();await fbPush()}catch(e){fbMsg(e.message)}};
+$("fbo").onclick=async()=>{try{if(FB){await FB.a.signOut();FBU=null}fbMsg("Disconnesso")}catch(e){fbMsg(e.message)}};
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&FBU)fbPull()});
+if(fbCfg())fbInit().catch(e=>fbMsg(e.message));
 $("xa").onclick=()=>{const l=prompt("Descrizione della voce");if(!l)return;const v=parseFloat((prompt("Importo in euro (negativo se è una trattenuta)")||"").replace(",","."));if(isNaN(v))return;const t=confirm("L'importo è LORDO (soggetto a imposte)? OK = lordo, Annulla = netto")?"g":"n";const pm=$("ym").value;S.ex=S.ex||{};(S.ex[pm]=S.ex[pm]||[]).push({l,v,t});sv();rows()};
 $("xr").onclick=()=>{const pm=$("ym").value;if(S.ex&&S.ex[pm]&&confirm("Rimuovere le voci extra di questo mese?")){delete S.ex[pm];sv();rows()}};
 $("fpv").onclick=e=>{const c=e.target.closest("[data-k]");if(c){const k=c.dataset.k;go("mese");$("ym").value=k.slice(0,7);rows();$("cal").onclick({target:{closest:()=>({dataset:{k}})}})}};
